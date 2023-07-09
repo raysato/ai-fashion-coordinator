@@ -1,63 +1,28 @@
-# Nuxt 3 Minimal Starter
-
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
-## Setup
-
-Make sure to install the dependencies:
+## セットアップ
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
+# プロジェクトをGitHubからクローン
+git clone git@github.com:raysato/ai-fashion-coordinator.git
+# or
+git clone https://github.com/raysato/ai-fashion-coordinator.git
+# パッケージのインストール (yarnを使う場合)
 yarn install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
+# パッケージのインストール (npmを使う場合)
+npm install
+# 開発環境起動 (yarnを使う場合)
 yarn dev
+# 開発環境起動 (npmを使う場合)
+npm run dev
 ```
 
-## Production
+## 開発
+フロントエンドフレームワークに[Vue.js](vuejs.org)を使用しています。基本的な記述方法はHTMLと同じです。
 
-Build the application for production:
+プロジェクトフォルダの ```pages/``` 以下のファイルが表示されるページになるので、基本的にここを編集していただければ。。
+> e.g.)   
+> ```pages/index.vue``` -> example.com/  
+> ```pages/anotherpage.vue``` -> example.com/anotherpage  
+>  ```pages/directory1/anotherpage.vue``` -> example.com/directory1/anotherpage
 
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+サイトのデザインに[Tailwind CSS](https://tailwindcss.com/)と[Daisy UI](https://daisyui.com/)を使用しています。  
+[ここ](https://daisyui.com/components/)にある部品を適当に`.vue`の`<template>`タグ内にペタペタすればデザインが出来上がります。
