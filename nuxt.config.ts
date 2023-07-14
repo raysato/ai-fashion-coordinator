@@ -7,4 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase'
   ],
   css: ["@/assets/styles/tailwind.css"],
+  runtimeConfig: {
+    gptKey: process.env.CHATGPT_KEY
+  },
 })
