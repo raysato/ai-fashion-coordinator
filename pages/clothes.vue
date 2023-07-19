@@ -6,6 +6,4 @@ const supabase = useSupabaseClient()
 </script>
 
 <template>
-    aaaaaaaaaaaaaaab
-    <input type="file" class="file-input w-full max-w-xs" />
 </template>
