@@ -38,7 +38,8 @@ const handleLogin = async () => {
         </label>
         <input v-model="password" type="password" min="6" placeholder="password" class="input input-bordered" />
         <label class="label">
-        <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+        <!-- <a href="#" class="label-text-alt link link-hover">Forgot password?</a> -->
+        <NuxtLink to="/signup" class="label-text-alt link link-hover link-primary">or Signup</NuxtLink>
         </label>
     </div>
     <div class="form-control mt-6">
