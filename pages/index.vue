@@ -1,3 +1,60 @@
+<script lang="ts" setup>
+const isLoggedIn = ref(false)
+const locationGranted = ref(false)
+const showModal = ref(false)
+const outfits = [
+  {id: 1, image: '../assets/img/white.jpg', description: 'White dress'},
+  {id: 2, image: '../assets/img/white.jpg', description: 'Blue jeans'},
+  {id: 3, image: '../assets/img/white.jpg', description: 'Green shirt'},
+  {id: 4, image: '../assets/img/white.jpg', description: 'Red shoes'}
+]
+const fileInput: Ref<HTMLInputElement | null> = ref(null)
+// これをAPIからの実際のデータに置き換える
+const weather = {
+  condition: 'Sunny',
+  icon: '../assets/img/sun.png',
+  temperature: 24,
+  humidity: 65,
+}
+const closetItems = outfits
+
+const regenerate = () => {
+  // Show the modal
+  showModal.value = true;
+}
+const login = () => {
+  // Add your login logic here
+  // After successful login, set isLoggedIn to true
+  isLoggedIn.value = true;
+}
+const triggerFileSelection = () => {
+  fileInput.value?.click();
+}
+const uploadClothes = () => {
+  if (fileInput.value instanceof HTMLInputElement) {
+
+    const file = fileInput.value.files?.[0];
+    if (file) {
+      // Upload the file here.
+      // For now, we just print its name to the console.
+      console.log(`Uploading file: ${file.name}`);
+    }
+  }
+}
+const grantLocation = () => {
+  // Add your location granting logic here
+  // After user's permission, set locationGranted to true
+  locationGranted.value = true;
+
+  // Hide the modal
+  showModal.value = false;
+}
+const closeModal = () => {
+  // Hide the modal
+  showModal.value = false;
+}
+</script>
+
 <template>
   <div v-if="isLoggedIn" class="m-4">
     <div v-if="!locationGranted">
@@ -47,7 +104,7 @@
         </div>
       </div>
       <div class="grid gap-4 mb-4">
-        <div v-for="clothes in clothesInCloset" :key="clothes.id">
+        <div v-for="clothes in closetItems" :key="clothes.id">
           <img :src="clothes.image" alt="Clothes image" class="w-full h-32 object-cover">
           <p class="text-center mt-2">{{ clothes.description }}</p>
         </div>
@@ -123,79 +180,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'index',
-  data() {
-    return {
-      isLoggedIn: false, // Default: User is not logged in
-      locationGranted: false, // Default: User has not granted location permission
-      showModal: false, // Default: The modal is not shown
-      outfits: [
-        {id: 1, image: '../assets/img/white.jpg', description: 'White dress'},
-        {id: 2, image: '../assets/img/white.jpg', description: 'Blue jeans'},
-        {id: 3, image: '../assets/img/white.jpg', description: 'Green shirt'},
-        {id: 4, image: '../assets/img/white.jpg', description: 'Red shoes'}
-      ],
-      weather: {
-        condition: 'Sunny', // これをAPIからの実際のデータに置き換える
-        icon: '../assets/img/sun.png', // これをAPIからの実際のデータに置き換える
-        temperature: 24, // これをAPIからの実際のデータに置き換える
-        humidity: 65, // これをAPIからの実際のデータに置き換える
-      },
-      closetItems: [
-      {id: 1, image: '../assets/img/white.jpg', },
-      {id: 2, image: '../assets/img/white.jpg', },
-      {id: 3, image: '../assets/img/white.jpg',},
-      {id: 4, image: '../assets/img/white.jpg', }
-    ],
-
-    }
-  },
-  methods: {
-    regenerate() {
-      // Show the modal
-      this.showModal = true;
-    },
-    login() {
-      // Add your login logic here
-      // After successful login, set isLoggedIn to true
-      this.isLoggedIn = true;
-    },
-    triggerFileSelection() {
-      this.$refs.fileInput.click();
-    },
-    uploadClothes(event) {
-      const file = event.target.files[0];
-      if (file) {
-        // Upload the file here.
-        // For now, we just print its name to the console.
-        console.log(`Uploading file: ${file.name}`);
-      }
-    },
-    grantLocation() {
-      // Add your location granting logic here
-      // After user's permission, set locationGranted to true
-      this.locationGranted = true;
-
-      // Hide the modal
-      this.showModal = false;
-    },
-    closeModal() {
-      // Hide the modal
-      this.showModal = false;
-    }
-  }
-}
-</script>
-
-<style>
-@import 'https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css';
-@import 'https://cdn.jsdelivr.net/npm/daisyui/dist/full.css';
-
-body {
-  background-color: #d3d3d3;
-}
-/* ... existing styles ... */
-</style>
