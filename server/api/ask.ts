@@ -1,16 +1,12 @@
+import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server'
+import { Clothes } from '../../composables/account'
+import { Database } from '../../supabase/schema'
+
 export default defineEventHandler(async (event) => {
-    const clothes = [
-        "Striped denim jacket",
-        "Flowy floral maxi dress",
-        "Black leather ankle boots",
-        "Plaid flannel shirt",
-        "Navy blue cargo pants",
-        "Embroidered bohemian blouse",
-        "Checked tailored blazer",
-        "Knit beanie hat",
-        "Printed silk scarf",
-        "Distressed skinny jeans",
-    ]
+    const client = serverSupabaseClient<Database>(event)
+    const user = await serverSupabaseUser(event)
+    const { data: userClothes } = await client.from('images').select().eq('user_uid', user?.id)
+    const clothes = userClothes?.map(value => value.image_desc) ?? []
     const text = clothes.reduce((prev, val) => `${prev},${val}`, "You have the following clothes: ")
     const config = useRuntimeConfig();
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -24,7 +20,7 @@ export default defineEventHandler(async (event) => {
                 {"role": "system", "content": "You are a helpful fashion coordinator."},
                 {"role": "system", "content": text},
                 {"role": "system", "content": `Today's weather is ${32} degrees celsius, ${60}% humidity`},
-                {"role": "user", "content": "What clothes should I wear today?"}
+                {"role": "user", "content": "Coordinate a comfortable and good looking fashion with the clothes."}
             ],
             model: "gpt-3.5-turbo",
             max_tokens: 500,
@@ -33,11 +29,14 @@ export default defineEventHandler(async (event) => {
             stop: '###'
         })
     });
-    return await response.json()
-    if (response.status !== 200) {
-        return response
-    }
+    const message: string = (await response.json()).choices[0].message.content
+    const chosenClothes: Clothes[] = userClothes?.filter(value => value.image_desc && message.toLowerCase().includes(value.image_desc.toLowerCase())).map((value) => ({
+        id: value.id,
+        path: value.image_path,
+        desc: value.image_desc
+    })) ?? []
     return {
-        hello: 'world'
+        clothes: chosenClothes,
+        message,
     }
 })

@@ -2,6 +2,7 @@ import { User } from "@supabase/supabase-js"
 import { Database } from "supabase/schema"
 
 export interface Clothes {
+    id: number | null
     path: string | null
     desc: string | null
 }
@@ -9,6 +10,7 @@ const updateClothes = (userClothes: Ref<Clothes[]>, user: Ref<User | null>) => a
     const supabase = useSupabaseClient<Database>()
     const { data } = await supabase.from('images').select().eq('user_uid', user.value?.id)
     userClothes.value = data?.map((value) => ({
+        id: value.id,
         path: value.image_path,
         desc: value.image_desc
     })) ?? []
@@ -31,9 +33,11 @@ const uploadClothes = (userClothes: Ref<Clothes[]>, user: Ref<User | null>) => a
         alert(`error`)
         return
     }
-    const { error } = await supabase.from('images').insert({ user_uid: user.value.id, image_path: uploadedFile.path })
+    const { error, data } = await supabase.from('images').insert({ user_uid: user.value.id, image_path: uploadedFile.path }).select()
+    console.log(data)
     if (!error) {
         userClothes.value.push({
+            id: data[0].id,
             path: fileName,
             desc: ""
         })

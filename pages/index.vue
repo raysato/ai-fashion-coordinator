@@ -40,6 +40,8 @@ const closeModal = () => {
 onMounted(() => {
   updateClothes()
 })
+
+const {data: gpt, refresh, pending} = await useLazyFetch('/api/ask') 
 </script>
 
 <template>
@@ -60,14 +62,17 @@ onMounted(() => {
     <div v-if="locationGranted">
       <h1 class="text-4xl font-bold text-center">Today's outfit</h1>
 
-      <hr style="border-color: #60A5FA;" class="border-t-2 mt-2 mb-4">
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div v-for="outfit in outfits" :key="outfit.id">
-          <img :src="outfit.image" alt="Outfit image" class="w-full h-32 object-cover">
-          <p class="text-center mt-2">{{ outfit.description }}</p>
+      <div v-if="!pending">
+        <hr style="border-color: #60A5FA;" class="border-t-2 mt-2 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <OutfitItem v-for="value in gpt?.clothes" :clothesProp="value" />
         </div>
+        <p v-if="!pending">{{ gpt?.message }}</p>
+        <button class="btn btn-info" @click="() => refresh()">Regenerate</button>
       </div>
-      <button class="btn btn-info" @click="regenerate">Regenerate</button>
+      <div v-else class="flex justify-center">
+        <span class="loading loading-spinner loading-lg"></span>
+      </div>
 
       <!-- "Today's weather" section -->
       <h2 class="text-4xl font-bold mt-6 text-center">Today's weather</h2>
@@ -85,7 +90,7 @@ onMounted(() => {
       <hr style="border-color: #60A5FA;" class="border-t-2 mt-2 mb-4">
 
       <div class="grid grid-cols-4 gap-4 mb-4">
-        <ClosetItem v-for="clothes in userClothes" :clothes="clothes"/>
+        <LazyClosetItem v-for="clothes in userClothes" :clothesProp="clothes"/>
       </div>
       <div class="grid gap-4 mb-4">
         <!-- <div v-for="clothes in closetItems" :key="clothes.id">
