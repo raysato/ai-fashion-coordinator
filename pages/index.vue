@@ -3,7 +3,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const isLoggedIn = ref(false)
+const {userClothes, updateClothes} = useAccount()
 const locationGranted = ref(false)
 const showModal = ref(false)
 const outfits = [
@@ -12,7 +12,6 @@ const outfits = [
   {id: 3, image: '../assets/img/white.jpg', description: 'Green shirt'},
   {id: 4, image: '../assets/img/white.jpg', description: 'Red shoes'}
 ]
-const fileInput: Ref<HTMLInputElement | null> = ref(null)
 // これをAPIからの実際のデータに置き換える
 const weather = {
   condition: 'Sunny',
@@ -26,25 +25,6 @@ const regenerate = () => {
   // Show the modal
   showModal.value = true;
 }
-const login = () => {
-  // Add your login logic here
-  // After successful login, set isLoggedIn to true
-  isLoggedIn.value = true;
-}
-const triggerFileSelection = () => {
-  fileInput.value?.click();
-}
-const uploadClothes = () => {
-  if (fileInput.value instanceof HTMLInputElement) {
-
-    const file = fileInput.value.files?.[0];
-    if (file) {
-      // Upload the file here.
-      // For now, we just print its name to the console.
-      console.log(`Uploading file: ${file.name}`);
-    }
-  }
-}
 const grantLocation = () => {
   // Add your location granting logic here
   // After user's permission, set locationGranted to true
@@ -57,6 +37,9 @@ const closeModal = () => {
   // Hide the modal
   showModal.value = false;
 }
+onMounted(() => {
+  updateClothes()
+})
 </script>
 
 <template>
@@ -102,25 +85,15 @@ const closeModal = () => {
       <hr style="border-color: #60A5FA;" class="border-t-2 mt-2 mb-4">
 
       <div class="grid grid-cols-4 gap-4 mb-4">
-        <div v-for="clothingItem in closetItems" :key="clothingItem.id">
-          <img :src="clothingItem.image" alt="Clothing item image" class="w-full h-32 object-cover">
-          <p class="text-center mt-2">{{ clothingItem.description }}</p>
-        </div>
+        <ClosetItem v-for="clothes in userClothes" :clothes="clothes"/>
       </div>
       <div class="grid gap-4 mb-4">
-        <div v-for="clothes in closetItems" :key="clothes.id">
+        <!-- <div v-for="clothes in closetItems" :key="clothes.id">
           <img :src="clothes.image" alt="Clothes image" class="w-full h-32 object-cover">
           <p class="text-center mt-2">{{ clothes.description }}</p>
-        </div>
-        <div class="border-2 border-dashed rounded-md p-4 text-center">
-          <div class="border-4 border-blue-500 rounded-full p-2 inline-flex items-center justify-center">
-            <input type="file" accept="image/*" @change="uploadClothes" style="display: none" ref="fileInput">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full h-12 w-12 flex items-center justify-center" @click="triggerFileSelection">
-              +
-            </button>
-          </div>
-          <p class="mt-2 text-center">Add clothes...</p>
-        </div>
+        </div> -->
+        <!-- /components/upload.vue -->
+        <Upload />
       </div>
     </div>
 
