@@ -1,20 +1,54 @@
-export const useAccount = () => {
-    const supabase = useSupabaseClient()
-    const account = useState('alerts', () => useSupabaseUser())
+import { User } from "@supabase/supabase-js"
+import { Database } from "supabase/schema"
 
-    const signOut = async () => {
-        try {
-            const { error } = await supabase.auth.signOut()
-            if (error) throw error
-            account.value = null
-        } catch (error) {
-            alert(error)
-        } finally {
-            navigateTo("/")
-        }
+export interface Clothes {
+    path: string | null
+    desc: string | null
+}
+const updateClothes = (userClothes: Ref<Clothes[]>, user: Ref<User | null>) => async () => {
+    const supabase = useSupabaseClient<Database>()
+    const { data } = await supabase.from('images').select().eq('user_uid', user.value?.id)
+    userClothes.value = data?.map((value) => ({
+        path: value.image_path,
+        desc: value.image_desc
+    })) ?? []
+}
+const getClothes = async (user: Ref<User | null>) => {
+    const supabase = useSupabaseClient<Database>()
+    const { data } = await supabase.from('images').select().eq('user_uid', user.value?.id)
+    return data?.map((value) => ({
+        path: value.image_path,
+        desc: value.image_desc
+    })) ?? []
+}
+const uploadClothes = (userClothes: Ref<Clothes[]>, user: Ref<User | null>) => async (file: File) => {
+    
+    const supabase = useSupabaseClient<Database>()
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${user.value?.id}-${new Date().getDate()}.${fileExt}`
+    const { error: uploadError, data: uploadedFile } = await supabase.storage.from(`images`).upload(fileName, file)
+    if (uploadError || user.value === null) {
+        alert(`error`)
+        return
     }
+    const { error } = await supabase.from('images').insert({ user_uid: user.value.id, image_path: uploadedFile.path })
+    if (!error) {
+        userClothes.value.push({
+            path: fileName,
+            desc: ""
+        })
+    }
+}
+
+export const useAccount = () => {
+    const user = useState('user', () => useSupabaseUser())
+    const userClothes = useState<Clothes[]>('userClothes', () => [])
+    updateClothes(userClothes, user)
 
     return {
-        account: readonly(account),
+        account: readonly(user),
+        userClothes: readonly(userClothes),
+        updateClothes: updateClothes(userClothes, user),
+        uploadClothes: uploadClothes(userClothes, user)
     }
 }
