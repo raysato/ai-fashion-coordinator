@@ -13,7 +13,7 @@ const { data, error } = await supabase.storage.from('images').download(clothes.v
 if (error) throw error
 const url = URL.createObjectURL(data)
 const editing = ref(false)
-
+const {addAlert} = useAlert()
 const save = async () => {
     console.log(clothes.value)
     const { data, error } = await supabase
@@ -24,6 +24,10 @@ const save = async () => {
     console.log(data)
     if (!error) {
         updateClothes()
+        addAlert({
+            type: 'alert-success',
+            message: 'Successfully updated image.'
+        })
     }
 }
 </script>

@@ -24,13 +24,17 @@ const getClothes = async (user: Ref<User | null>) => {
     })) ?? []
 }
 const uploadClothes = (userClothes: Ref<Clothes[]>, user: Ref<User | null>) => async (file: File) => {
-    
+    const { addAlert } = useAlert()
     const supabase = useSupabaseClient<Database>()
     const fileExt = file.name.split('.').pop()
-    const fileName = `${user.value?.id}-${new Date().getDate()}.${fileExt}`
+    const fileName = `${user.value?.id}-${new Date().getTime()}.${fileExt}`
     const { error: uploadError, data: uploadedFile } = await supabase.storage.from(`images`).upload(fileName, file)
     if (uploadError || user.value === null) {
         alert(`error`)
+        addAlert({
+            type: 'alert-error',
+            message: 'Error.'
+        })
         return
     }
     const { error, data } = await supabase.from('images').insert({ user_uid: user.value.id, image_path: uploadedFile.path }).select()
@@ -41,6 +45,11 @@ const uploadClothes = (userClothes: Ref<Clothes[]>, user: Ref<User | null>) => a
             path: fileName,
             desc: ""
         })
+        addAlert({
+            type: 'alert-success',
+            message: 'Successfully uploaded image.'
+        })
+        return
     }
 }
 
