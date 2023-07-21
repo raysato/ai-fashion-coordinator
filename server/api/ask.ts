@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
                 {"role": "system", "content": "You are a helpful fashion coordinator."},
                 {"role": "system", "content": text},
                 {"role": "system", "content": `Today's weather is ${32} degrees celsius, ${60}% humidity`},
-                {"role": "user", "content": "Coordinate a comfortable and good looking fashion with the clothes."}
+                {"role": "user", "content": "Coordinate a comfortable and good looking fashion with the clothes. You do not have to use all of them."}
             ],
             model: "gpt-3.5-turbo",
             max_tokens: 500,
