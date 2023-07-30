@@ -7,6 +7,23 @@ interface navigation {
   link: string
 }
 const user = useSupabaseUser()
+
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(locationGranted, () => navigateTo('/sad'));
+    return
+  }
+  navigateTo('/sad')
+})
+
+const locationGranted = async (position: GeolocationPosition) => {
+  const {setLocation, setWeather} = useLocation()
+  setLocation(position)
+  const {data} = await useFetch(`/api/weather?latitude=${position.coords.latitude}&longitude=${position.coords.latitude}`)
+  if (data.value) {
+    setWeather(data.value)
+  }
+}
 </script>
 
 
@@ -14,7 +31,7 @@ const user = useSupabaseUser()
     <Html>
       <Head>
         <Title>{{ title }}</Title>
-        <Meta name="description" :content="`Stella Homepage`" />
+        <Meta name="description" :content="`USA 2023`" />
       </Head>
       <Body>
         <div class="drawer">

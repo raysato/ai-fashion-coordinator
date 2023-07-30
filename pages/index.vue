@@ -12,19 +12,7 @@ const outfits = [
   {id: 3, image: '../assets/img/white.jpg', description: 'Green shirt'},
   {id: 4, image: '../assets/img/white.jpg', description: 'Red shoes'}
 ]
-// これをAPIからの実際のデータに置き換える
-const weather = {
-  condition: 'Sunny',
-  icon: '../assets/img/sun.png',
-  temperature: 24,
-  humidity: 65,
-}
-const closetItems = outfits
 
-const regenerate = () => {
-  // Show the modal
-  showModal.value = true;
-}
 const grantLocation = () => {
   // Add your location granting logic here
   // After user's permission, set locationGranted to true
@@ -41,25 +29,18 @@ onMounted(() => {
   updateClothes()
 })
 
-const {data: gpt, refresh, pending} = await useLazyFetch('/api/ask') 
+
+const {weather} = useLocation();
+const {data: gpt, refresh, pending} = await useLazyFetch('/api/ask', {
+  method: 'post',
+  body: weather
+}) 
 </script>
 
 <template>
   <div  class="m-4">
-    <div v-if="!locationGranted">
-      <!-- Alert for location permission -->
-      <div class="alert alert-info">
-        <div class="flex-1">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">
 
-          </svg>
-          <label>位置情報を取得してもよろしいですか？</label>
-          <button class="btn btn-primary" @click="grantLocation">OK</button>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="locationGranted">
+    <div>
       <h1 class="text-4xl font-bold text-center">Today's outfit</h1>
 
       <div v-if="!pending">
@@ -78,11 +59,11 @@ const {data: gpt, refresh, pending} = await useLazyFetch('/api/ask')
       <h2 class="text-4xl font-bold mt-6 text-center">Today's weather</h2>
       <hr style="border-color: #60A5FA;" class="border-t-2 mt-2 mb-4">
       <div class="flex items-center space-x-4">
-        <img :src="weather.icon" alt="Weather icon" class="w-24 h-24 object-contain">
+        <NuxtImg :src="`https://openweathermap.org/img/wn/${weather?.weather[0].icon}@2x.png`" alt="Weather icon" class="w-24 h-24 object-contain" />
         <div>
-          <p class="text-2xl">{{ weather.condition }}</p>
-          <p class="text-2xl">Temperature: {{ weather.temperature }}°C</p>
-          <p class="text-2xl">Humidity: {{ weather.humidity }}%</p>
+          <p class="text-2xl">{{ weather?.weather[0].main }}</p>
+          <p class="text-2xl">Temperature: {{ weather?.main.temp }}°C</p>
+          <p class="text-2xl">Humidity: {{ weather?.main.humidity }}%</p>
         </div>
       </div>
 

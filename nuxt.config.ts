@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   ],
   css: ["@/assets/styles/tailwind.css"],
   runtimeConfig: {
-    gptKey: process.env.CHATGPT_KEY
+    gptKey: process.env.CHATGPT_KEY,
+    weatherKey: process.env.WEATHER_KEY
   },
 })
